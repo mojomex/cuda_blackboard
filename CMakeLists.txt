@@ -33,10 +33,7 @@ include_directories(
 )
 
 ament_auto_add_library(cuda_blackboard SHARED
-    src/cuda_blackboard.cpp
     src/cuda_image.cpp
-    src/cuda_pointcloud2.cpp
-    src/cuda_blackboard_publisher.cpp
     src/cuda_blackboard_subscriber.cpp
 )
 

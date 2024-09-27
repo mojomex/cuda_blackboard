@@ -49,7 +49,7 @@ public:
     cv_image.toImageMsg(ros_image_);
 
     auto publish_message = [this]() -> void {
-      auto cuda_image_ptr = std::make_unique<CudaImage>(ros_image_);
+      auto cuda_image_ptr = std::make_unique<const CudaImage>(ros_image_);
       RCLCPP_INFO(this->get_logger(), "Publishing message n=%d", count_++);
       pub_->publish(std::move(cuda_image_ptr));
     };
