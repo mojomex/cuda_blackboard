@@ -5,6 +5,8 @@
 #include "cuda_blackboard/cuda_blackboard.hpp"
 #include "cuda_blackboard/negotiated_types.hpp"
 
+#include <nvtx3/nvtx3.hpp>
+
 namespace cuda_blackboard
 {
 
@@ -37,6 +39,9 @@ CudaBlackboardPublisher<T>::CudaBlackboardPublisher(
 template <typename T>
 void CudaBlackboardPublisher<T>::publish(std::unique_ptr<const T> cuda_msg_ptr)
 {
+  nvtx3::scoped_range nvtx_blackboard{"cuda_blackboard"};
+  nvtx3::scoped_range nvtx_publish{"publish"};
+
   auto & map = negotiated_pub_->get_supported_types();
 
   using ROSMessageType = typename NegotiationStruct<T>::MsgT;

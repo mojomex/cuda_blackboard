@@ -4,6 +4,8 @@
 #include "cuda_blackboard/cuda_blackboard.hpp"
 #include "cuda_blackboard/negotiated_types.hpp"
 
+#include <nvtx3/nvtx3.hpp>
+
 #include <functional>
 
 namespace cuda_blackboard
@@ -78,6 +80,9 @@ CudaBlackboardSubscriber<T>::CudaBlackboardSubscriber(
 template <typename T>
 void CudaBlackboardSubscriber<T>::instanceIdCallback(const std_msgs::msg::UInt64 & instance_id_msg)
 {
+  nvtx3::scoped_range nvtx_blackboard{"cuda_blackboard"};
+  nvtx3::scoped_range nvtx_subscribe{"subscribe"};
+
   if (compatible_sub_ && negotiated_sub_->get_negotiated_topic_publisher_count() > 0) {
     const std::string ros_type_name = NegotiationStruct<typename T::ros_type>::supported_type_name;
     negotiated_sub_->remove_compatible_subscription<typename T::ros_type>(
@@ -104,6 +109,9 @@ template <typename T>
 void CudaBlackboardSubscriber<T>::compatibleCallback(
   const std::shared_ptr<const typename T::ros_type> & ros_msg_ptr)
 {
+  nvtx3::scoped_range nvtx_blackboard{"cuda_blackboard"};
+  nvtx3::scoped_range nvtx_subscribe{"subscribe"};
+
   const std::string ros_type_name = NegotiationStruct<typename T::ros_type>::supported_type_name;
 
   if (compatible_sub_ && negotiated_sub_->get_negotiated_topic_publisher_count() > 0) {

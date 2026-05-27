@@ -3,6 +3,7 @@ project(cuda_blackboard)
 
 find_package(ament_cmake_auto REQUIRED)
 find_package(CUDA)
+find_package(nvtx3 REQUIRED)
 
 if(NOT ${CUDA_FOUND})
   message(WARNING "cuda was not found. the cuda_blackboard package will not be built.")
@@ -42,6 +43,7 @@ ament_auto_add_library(cuda_blackboard SHARED
 
 target_link_libraries(cuda_blackboard
     ${CUDA_LIBRARIES}
+    nvtx3::nvtx3-cpp
 )
 
 ####

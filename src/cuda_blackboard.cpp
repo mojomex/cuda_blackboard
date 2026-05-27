@@ -3,6 +3,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <nvtx3/nvtx3.hpp>
+
 #include <iostream>
 
 namespace cuda_blackboard
@@ -19,6 +21,8 @@ template <typename T>
 uint64_t CudaBlackboard<T>::registerData(
   const std::string & producer_name, std::unique_ptr<const T> data, std::size_t tickets)
 {
+  nvtx3::scoped_range nvtx_bookkeeping{"bookkeeping"};
+
   std::lock_guard<std::mutex> lock(mutex_);
 
   std::mt19937_64 gen(rd_());
@@ -54,6 +58,8 @@ uint64_t CudaBlackboard<T>::registerData(
 template <typename T>
 std::shared_ptr<const T> CudaBlackboard<T>::queryData(const std::string & producer_name)
 {
+  nvtx3::scoped_range nvtx_bookkeeping{"bookkeeping"};
+
   std::lock_guard<std::mutex> lock(mutex_);
   auto it = producer_to_data_map_.find(producer_name);
 
@@ -80,6 +86,8 @@ std::shared_ptr<const T> CudaBlackboard<T>::queryData(const std::string & produc
 template <typename T>
 std::shared_ptr<const T> CudaBlackboard<T>::queryData(uint64_t instance_id)
 {
+  nvtx3::scoped_range nvtx_bookkeeping{"bookkeeping"};
+
   std::lock_guard<std::mutex> lock(mutex_);
   auto it = instance_id_to_data_map_.find(instance_id);
 
