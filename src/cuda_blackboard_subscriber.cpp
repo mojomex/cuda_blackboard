@@ -94,14 +94,19 @@ void CudaBlackboardSubscriber<T>::instanceIdCallback(const std_msgs::msg::UInt64
       "A negotiated message has been received, so the compatible callback will be disabled");
   }
 
-  auto & blackboard = CudaBlackboard<T>::getInstance();
-  auto data = blackboard.queryData(instance_id_msg.data);
-  if (data) {
-    callback_(data);
-  } else {
-    RCLCPP_ERROR_STREAM(
-      node_.get_logger(), "There was not data with the requested instance id= "
-                            << instance_id_msg.data << " in the blackboard.");
+  {
+    auto & cuda_orchestrator = CudaOrchestrator::getInstance();
+    std::lock_guard<std::mutex> lock(cuda_orchestrator.getMutex());
+
+    auto & blackboard = CudaBlackboard<T>::getInstance();
+    auto data = blackboard.queryData(instance_id_msg.data);
+    if (data) {
+      callback_(data);
+    } else {
+      RCLCPP_ERROR_STREAM(
+        node_.get_logger(), "There was not data with the requested instance id= "
+                              << instance_id_msg.data << " in the blackboard.");
+    }
   }
 }
 

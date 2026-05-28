@@ -56,4 +56,19 @@ private:
   std::random_device rd_;
 };
 
+class CudaOrchestrator {
+  public:
+    static CudaOrchestrator & getInstance() {
+      static CudaOrchestrator instance;
+      return instance;
+    }
+
+    std::mutex & getMutex() {
+      return mutex_;
+    }
+  
+  private:
+    std::mutex mutex_; //< Allows only one GPU workload at a time
+};
+
 }  // namespace cuda_blackboard
